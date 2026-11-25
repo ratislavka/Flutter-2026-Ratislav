@@ -54,7 +54,7 @@ class _CountdownScreenState extends State<CountdownScreen> {
   }
 }
 
-
+// A
 class CountdownStreamView extends StatefulWidget {
   const CountdownStreamView({super.key});
 
@@ -83,7 +83,7 @@ class _CountdownStreamViewState extends State<CountdownStreamView> {
   }
 }
 
-
+// B
 class CountdownManualView extends StatefulWidget {
   const CountdownManualView({super.key});
 
