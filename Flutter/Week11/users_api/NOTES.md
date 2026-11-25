@@ -1,3 +1,32 @@
+# Practice 12 · Survive a Restart
+
+## Package review, 25 November 2026
+
+Counts below are repository-wide open issues including pull requests, while commit dates refer to the package directory. “All six” means Android, iOS, Linux, macOS, web and Windows.
+
+- [shared_preferences](https://pub.dev/packages/shared_preferences) from verified publisher flutter.dev released in October 2026, supports all six, scores 160/160, has 315 open tracker entries with a commit on November 11, uses Flutter plus the platform interface and native/web preference adapters, and carries the BSD-3-Clause licence.
+- [flutter_secure_storage](https://pub.dev/packages/flutter_secure_storage) from verified publisher steenbakker.dev released in September 2026, supports all six, scores 160/160, has 27 open tracker entries with a commit on November 1, uses Flutter plus meta, its platform interface and Darwin, Linux, Windows and web adapters, and carries the BSD-3-Clause licence.
+- [path_provider](https://pub.dev/packages/path_provider) from verified publisher flutter.dev released in June 2026, supports Android, iOS, Linux, macOS and Windows, scores 160/160, has 315 open tracker entries with a commit on November 11, uses Flutter plus the platform interface and filesystem adapters, and carries the BSD-3-Clause licence.
+- [image_picker](https://pub.dev/packages/image_picker) from verified publisher flutter.dev released in October 2026, supports all six, scores 160/160, has 315 open tracker entries with a commit on November 24, uses Flutter plus the picker interface and platform adapters, and carries the BSD-3-Clause licence.
+- [permission_handler](https://pub.dev/packages/permission_handler) from verified publisher baseflow.com released in September 2026, supports Android, iOS, web and Windows, scores 160/160, has 158 open tracker entries with a commit on November 3, uses Flutter plus meta, its interface and Android, Apple, HTML and Windows adapters, and carries the MIT licence.
+- [url_launcher](https://pub.dev/packages/url_launcher) from verified publisher flutter.dev released in October 2026, supports all six, scores 160/160, has 315 open tracker entries with a commit on November 24, uses Flutter plus the launcher interface and six platform adapters, and carries the BSD-3-Clause licence.
+
+## Resolution and storage
+
+The six direct package constraints use carets. For example, `^1.2.0` accepts stable versions from 1.2.0 up to, but excluding, 2.0.0. It accepts 1.2.1 and 1.6.0 and refuses 1.1.9 and 2.0.0. The app commits pubspec.lock so another checkout uses the same exact direct and transitive versions.
+
+With this package set, pinning `http: 1.2.0` failed resolution. That version needs `web <0.5.0`, while permission_handler_html needs `web >=0.5.1`. Restoring the caret resolved HTTP 1.6.0. Flutter pub outdated listed material_color_utilities 0.13.1 as newer than 0.13.0, which the Flutter SDK pins.
+
+The app reads dark mode and city before runApp so the first frame uses the saved theme and filter. Preferences are suitable for these settings. A token in legacy Android preferences XML or an Apple preferences plist could be recovered from an accessible backup, a rooted device, or a computer with privileged access over a cable. The newer Android preferences backend can use DataStore, which also provides no secret-storage guarantee.
+
+The fake login saves its bearer token in secure storage. iOS Keychain entries can survive uninstall and reinstall. On Android, removing the secure lock screen can invalidate authentication-bound Keystore keys, requiring a fresh login. The users file and avatar live in Documents because the OS may purge Temporary at any time.
+
+## Permission behaviour
+
+On Android, deny the first camera prompt and tap Take photo again. After repeated denials (typically two on Android 11+), the OS stops prompting and the app offers Open settings. On iOS a single camera denial is enough. Later requests require changing the permission in Settings. Photos also has a limited-access state, in which only selected photos are visible. Cancelling the picker keeps the existing avatar.
+
+The two screenshots come from Flutter widget tests using a cached user fixture and a simulated permanent camera denial.
+
 # Practice 11 · A Real Server
 
 ## Level 1 · API inspection

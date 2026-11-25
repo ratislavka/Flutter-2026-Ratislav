@@ -73,7 +73,6 @@ class User {
   final Address address;
   final ({String name, String catchPhrase}) company;
 
-
   final String companyBs;
 
   factory User.fromJson(Map<String, dynamic> json) {

@@ -6,25 +6,35 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
+import '../storage/secure_store.dart';
 import 'api_exception.dart';
 
 typedef HttpClient = http.Client;
 
 class ApiClient {
-  ApiClient(this._client, {this.host = 'jsonplaceholder.typicode.com'});
+  ApiClient(
+    this._client,
+    this._store, {
+    this.host = 'jsonplaceholder.typicode.com',
+  });
 
   final http.Client _client;
   final String host;
+  final SecureStore _store;
 
-  Map<String, String> get headers => const {'Accept': 'application/json'};
+  Future<Map<String, String>> _headers() async => {
+    'Accept': 'application/json',
+    if (await _store.readToken() case final token?)
+      'Authorization': 'Bearer $token',
+  };
 
   Future<http.Response> get(Uri uri) =>
-      _send(() => _client.get(uri, headers: headers));
+      _send(() async => _client.get(uri, headers: await _headers()));
 
   Future<http.Response> post(Uri uri, Map<String, dynamic> body) => _send(
-    () => _client.post(
+    () async => _client.post(
       uri,
-      headers: {...headers, 'Content-Type': 'application/json'},
+      headers: {...await _headers(), 'Content-Type': 'application/json'},
       body: jsonEncode(body),
     ),
   );
@@ -85,5 +95,5 @@ class ApiClient {
     }
   }
 
-  void close() => _client.close();
+  void close() async => _client.close();
 }

@@ -1,15 +1,36 @@
+import 'dart:io';
+
 import 'package:http/http.dart' as http;
 
 import '../../core/api/api_client.dart';
 import '../../core/api/api_exception.dart';
 import 'user.dart';
+import 'users_cache.dart';
 
 class UserRepository {
-  const UserRepository(this._api);
+  const UserRepository(this._api, this._cache);
 
   final ApiClient _api;
 
-  Future<List<User>> getAll() async {
+  final UsersCache _cache;
+
+  Future<({List<User> items, bool fromCache})> getAll() async {
+    try {
+      final items = await _fetch();
+      try {
+        await _cache.save(items);
+      } on FileSystemException {
+        // The network result is still usable when the device has no space.
+      }
+      return (items: items, fromCache: false);
+    } on NoConnectionException {
+      final saved = await _cache.load();
+      if (saved == null) rethrow;
+      return (items: saved, fromCache: true);
+    }
+  }
+
+  Future<List<User>> _fetch() async {
     final response = await _api.get(Uri.https(_api.host, '/users'));
     try {
       final data = _api.decode(response) as List<dynamic>;

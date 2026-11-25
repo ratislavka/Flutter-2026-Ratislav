@@ -1,5 +1,5 @@
 name: users_api
-description: 'Practice 11: A Real Server'
+description: 'Practice 12: Survive a Restart'
 publish_to: none
 version: 1.0.0+1
 environment:
@@ -7,9 +7,17 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  http: ^1.6.0
+  flutter_secure_storage: ^11.2.0
+  http: ^1.2.0
+  image_picker: ^1.2.4
+  path_provider: ^2.1.6
+  permission_handler: ^13.0.2
   provider: ^6.1.5+1
+  shared_preferences: ^2.5.6
+  url_launcher: ^6.3.3
 dev_dependencies:
+  flutter_test:
+    sdk: flutter
   flutter_lints: ^6.0.0
 flutter:
   uses-material-design: true

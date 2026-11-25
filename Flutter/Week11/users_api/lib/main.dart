@@ -1,9 +1,19 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
+// Keep the Material import used by the practice SDK.
+// ignore: deprecated_member_use
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'core/storage/secure_store.dart';
+import 'features/auth/auth_model.dart';
+import 'features/auth/login_screen.dart';
+import 'features/settings/settings_model.dart';
+import 'features/users/users_cache.dart';
 import 'core/api/api_client.dart';
 import 'core/api/api_exception.dart';
 import 'features/users/user.dart';
@@ -40,7 +50,15 @@ const String user1Json = r'''
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final repository = UserRepository(ApiClient(HttpClient()));
+  final prefs = SharedPreferencesAsync();
+  final dark = await prefs.getBool('darkMode') ?? false;
+  final city = await prefs.getString('cityFilter') ?? '';
+  const store = SecureStore();
+  final token = await store.readToken();
+  final repository = UserRepository(
+    ApiClient(HttpClient(), store),
+    UsersCache(),
+  );
 
   if (kDebugMode && runLabChecks) {
     try {
@@ -51,12 +69,24 @@ Future<void> main() async {
   }
 
   runApp(
-    ChangeNotifierProvider(
-      create: (_) {
-        final model = UsersModel(repository);
-        unawaited(model.load());
-        return model;
-      },
+    MultiProvider(
+      providers: [
+        Provider.value(value: prefs),
+        Provider.value(value: store),
+        ChangeNotifierProvider(
+          create: (_) => SettingsModel(
+            prefs,
+            dark: dark,
+            city: city.isEmpty ? null : city,
+          ),
+        ),
+        ChangeNotifierProvider(create: (_) => AuthModel(store, token)),
+        ChangeNotifierProvider(
+          create: (_) {
+            return UsersModel(repository);
+          },
+        ),
+      ],
       child: const App(),
     ),
   );
@@ -69,7 +99,7 @@ Future<void> runConsoleChecks(UserRepository repository) async {
   debugPrint('Round trip: ${roundTrip.toJson()}');
 
   final all = await repository.getAll();
-  for (final user in all) {
+  for (final user in all.items) {
     debugPrint(user.name);
   }
 
@@ -97,7 +127,21 @@ class App extends StatelessWidget {
     return MaterialApp(
       title: 'Users',
       debugShowCheckedModeBanner: false,
-      home: const UsersScreen(),
+      themeMode: context.watch<SettingsModel>().dark
+          ? ThemeMode.dark
+          : ThemeMode.light,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+      ),
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.deepPurple,
+          brightness: Brightness.dark,
+        ),
+      ),
+      home: context.watch<AuthModel>().signedIn
+          ? const UsersScreen()
+          : const LoginScreen(),
     );
   }
 }
