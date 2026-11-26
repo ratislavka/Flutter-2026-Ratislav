@@ -1,7 +1,5 @@
 import 'dart:io';
-
 import 'package:http/http.dart' as http;
-
 import '../../core/api/api_client.dart';
 import '../../core/api/api_exception.dart';
 import 'user.dart';
@@ -20,7 +18,6 @@ class UserRepository {
       try {
         await _cache.save(items);
       } on FileSystemException {
-        // The network result is still usable when the device has no space.
       }
       return (items: items, fromCache: false);
     } on NoConnectionException {

@@ -1,5 +1,3 @@
-// Keep this import compatible with the Flutter SDK used in the handout.
-// ignore: deprecated_member_use
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

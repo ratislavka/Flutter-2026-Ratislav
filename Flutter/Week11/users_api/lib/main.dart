@@ -1,14 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
-// Keep the Material import used by the practice SDK.
-// ignore: deprecated_member_use
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'core/storage/secure_store.dart';
 import 'features/auth/auth_model.dart';
 import 'features/auth/login_screen.dart';
@@ -21,7 +16,7 @@ import 'features/users/user_repository.dart';
 import 'features/users/users_model.dart';
 import 'features/users/users_screen.dart';
 
-// Run `flutter run --dart-define=RUN_LAB_CHECKS=true`  Level 2 and 3.
+// `flutter run --dart-define=RUN_LAB_CHECKS=true`  Level 2 and 3.
 const bool runLabChecks = bool.fromEnvironment('RUN_LAB_CHECKS');
 
 const String user1Json = r'''

@@ -1,19 +1,13 @@
 import 'dart:async';
-
-// Keep the Material import used by the practice SDK.
-// ignore: deprecated_member_use
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../../core/storage/secure_store.dart';
 import '../profile/profile_screen.dart';
 import '../settings/settings_screen.dart';
 import '../settings/settings_model.dart';
-
 import 'package:provider/provider.dart';
-
 import '../../core/api/api_exception.dart';
 import 'new_user_screen.dart';
 import 'user.dart';
@@ -276,7 +270,6 @@ class UserDetailScreen extends StatelessWidget {
     try {
       if (await launchUrl(uri, mode: LaunchMode.externalApplication)) return;
     } on PlatformException {
-      // Some platforms report a missing handler as an exception.
     }
     if (context.mounted) {
       ScaffoldMessenger.of(context)

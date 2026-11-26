@@ -1,7 +1,4 @@
 import 'dart:io';
-
-// Keep the Material import used by the practice SDK.
-// ignore: deprecated_member_use
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -35,7 +32,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ) ??
           '';
       if (saved.isEmpty) return;
-      // iOS can move the app container; resolve the stored filename in today's Documents.
       final directory = await getApplicationDocumentsDirectory();
       final file = File.fromUri(
         directory.uri.resolve(File(saved).uri.pathSegments.last),
